@@ -1,0 +1,15 @@
+ - que son las SNNs? => paper que habla de la 3era generacion
+ - por que usaria SNN?
+	- bajo consumo
+	- baja latencia
+	- estudio biologia
+	- ...
+	- ejemplos de uso
+		- event based camara
+		- ...
+ - Como entreno?
+	- no supervisado: similar a biologia, stdp, regla de Oja, etc etc
+	- supervisado:
+		- conversion DNN a SNN  (ver Hendy, Hagar 2022 seccion 3.3)
+		- BACKPROPAGATION: SNNTORCH
+
