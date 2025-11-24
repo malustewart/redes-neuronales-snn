@@ -24,7 +24,7 @@
     // handout: true,
     // show-notes-on-second-screen: right,
   ),
-  progress-bar: true,
+  progress-bar: false,
   align: horizon
 )
 
@@ -97,11 +97,43 @@ _*Características necesarias de las neuronas de una SNN:*_][
     @snntorch_2023
 ]
 
+= ¿Dónde se pueden ejecutar las SNNs?
+
+== Hardware neuromórfico
+
+#slide()[
+    #todo-inline[Hardware neuromorfico, por que y que existe comercialmente / semicomercialmente]
+]
+
+#slide(title: [Procesador TrueNorth])[
+    #image("figs/truenortharch.png")
+][
+    Procesador TrueNorth:
+    #pause
+    - Procesador neuromórfico para SNNs.
+    #pause
+    - 1 millón de neuronas LIF.
+    #pause
+    - 256 millones de conexiones entre neuronas (sinapsis)
+    #pause
+    - Pesos de 2 bits de precisión.
+    #pause
+    - Dividido en 4096 cores.
+    #pause
+    - Actualización asincrónica de neuronas.
+    #pause
+    - Salida binaria de neuronas.
+    #pause
+    - Opcional: estocasticidad en la salida de las neuronas.
+    #pause
+]
+
+
 = ¿Por qué usar SNNs?
 #new-section-slide([], title: [])
 
 #slide()[
-    - _*Eficiencia energética*_: en muchos casos, el consumo de potencia es mucho menor principalmente debido a que:
+    - _*Eficiencia energética*_: en muchos casos, el consumo de potencia es mucho menor que otras ANN principalmente debido a que:
         - son _event-driven_: las neuronas solo transmiten información (i.e.: un pulso) cuando ocurre un evento.
         - las señales de salida son poco densas (_sparse_) debido a que, para cada neurona, la mayor parte del tiempo no hay eventos.#footnote[Esto depende del entrenamiento, pero es posible incluir la cantidad de disparos total de la red como factor en la función de costo para regular el consumo de potencia total de la red.]
     #pause
@@ -111,52 +143,38 @@ _*Características necesarias de las neuronas de una SNN:*_][
 #slide()[
     - _*Apropiadas para procesamiento series temporales*_: 
         - Como las neuronas tienen memoria su entrada en el pasado, no hace falta una arquitectura recurrente para procesar temporales.
-        - #todo-inline[]
     #pause
     - _*Similitud a redes neuronales biológicas*_: son más cercanas a las redes neuronales biológicas, lo que puede ser útil para modelar y estudiar su comportamiento.
 ]
 
-== SNNs aplicadas a series temporales
-#slide(title: [DNNs vs. SNNs], composer: (1fr, 2fr))[
-    _*Comparación entre DNNs y SNNs para aplicación de computer vision: @Hendy_Merkel_2022*_
-][
-    #let color-cell(name, color) = (table.cell(fill: color, text(fill: white, name)))
-    #table(
-        columns: (1fr, 1fr, 1fr),
-        align: (left, center, center),
-        fill: (x,y) => if x==0 or y==0 {
-            gray.lighten(20%)
-        },
-        stroke: gray.lighten(40%),
-        inset: (left:1.5em, right:1.5em),
-        table.header([], [DNNs], [SNNs]),
-        [Procesamiento de datos], color-cell([Basado en frames], red), color-cell([Basado en eventos], green),
-        [Latencia], color-cell([Alta], red), color-cell([Baja], green),
-        [Diferenciable], color-cell([Sí], green), color-cell([No], red),
-        // [Activación], [ReLU, Sigmoide, etc.], [Pulsos],
-        [Complejidad de neurona], color-cell([Baja], green), color-cell([Alta], red),
-        [Memoria a corto plazo], color-cell([Nivel red], red), color-cell([Nivel red y neuronal], green),
-        [Eficiencia energética#footnote([Considerando hardware neuromórfico específico para cada caso.])], color-cell([Baja], red), color-cell([Alta], green)
-    )
-]
-
-
-== Hardware neuromórfico 
-#slide()[
-    #todo-inline[Hardware neuromorfico, por que y que existe comercialmente / semicomercialmente]
-]
-
-== Caso de uso: cámaras de eventos.
-#focus-slide[Caso de uso: cámaras de eventos.]
-
-// #slide(align:horizon)[
-//     _*Cámara de eventos*_: Cámaras inspiradas en sistemas visuales biológicos:
-//     #align(center)[
-//         #image("figs/camera_comparison.png", height: 80%)
-//     ]
+// == SNNs aplicadas a series temporales
+// #slide(title: [DNNs vs. SNNs], composer: (1fr, 2fr))[
+//     _*Comparación entre DNNs y SNNs para aplicación de computer vision: @Hendy_Merkel_2022*_
+// ][
+//     #let color-cell(name, color) = (table.cell(fill: color, text(fill: white, name)))
+//     #table(
+//         columns: (1fr, 1fr, 1fr),
+//         align: (left, center, center),
+//         fill: (x,y) => if x==0 or y==0 {
+//             gray.lighten(20%)
+//         },
+//         stroke: gray.lighten(40%),
+//         inset: (left:1.5em, right:1.5em),
+//         table.header([], [DNNs], [SNNs]),
+//         [Procesamiento de datos], color-cell([Basado en frames], red), color-cell([Basado en eventos], green),
+//         [Latencia], color-cell([Alta], red), color-cell([Baja], green),
+//         [Diferenciable], color-cell([Sí], green), color-cell([No], red),
+//         // [Activación], [ReLU, Sigmoide, etc.], [Pulsos],
+//         [Complejidad de neurona], color-cell([Baja], green), color-cell([Alta], red),
+//         [Memoria a corto plazo], color-cell([Nivel red], red), color-cell([Nivel red y neuronal], green),
+//         [Eficiencia energética#footnote([Considerando hardware neuromórfico específico para cada caso.])], color-cell([Baja], red), color-cell([Alta], green)
+//     )
 // ]
 
-#slide[
+== ¿Qué es una cámara de eventos?
+#focus-slide[Caso de uso: procesamiento de salida de cámaras de eventos.]
+
+#slide(title:"¿Qué es una cámara de eventos?", composer: (1.3fr, 1fr))[
     #image("figs/camera_comparison.png")
 ][
     - Cámaras inspiradas en sistemas visuales biológicos:
@@ -164,36 +182,48 @@ _*Características necesarias de las neuronas de una SNN:*_][
         - Mayor sensibilidad a grandes cambios de intensidad que a intensidad constante.
         #pause
         - _Event-driven_: solo se guarda la información de eventos (cambios). Donde no hay cambios no se guarda información.
-        #pause
 ]
 
-#slide[
+#slide(title:"¿Qué es una cámara de eventos?", composer: (1.3fr, 1fr))[
     #image("figs/camera_comparison.png")
 ][
     - La salida es un arreglo de estructuras iguales con 3 datos (no se guardan frames completos!):
         - Posición del evento
         - Timestamp del evento:
         - Polaridad del evento
+    #pause
     #sym.arrow.double Comparada con una cámara de frames convencional, tiene:
-    - Menos volumen de datos
+    - Menos volumen de datos de salida
     - Más detalle del movimiento
+]
+
+#slide(align:center+horizon, composer: (15fr, 1fr))[
+    #image("figs/frame_vs_event_based_dataset.png", height: 80%)][
+    @gesture_recognition_2017
+]
+
+#slide(align:center+horizon, composer: (15fr, 1fr))[
+    #image("figs/frame_vs_event_based_rocks.png")][
+    @Hendy_Merkel_2022
+]
+
+== Procesamiento de salida de una cámara de eventos con SNNs
+#slide[
+    #emph[Por el formato de los datos de salida de una cámara de eventos, las SNNs son ideales para procesarlos!]
 ]
 
 
 
 #slide[
-    #todo-inline[tabla de comparacion entre frame based y event based camaras.]
-    #todo-inline[Combinacion con camara frame based]
-    - ventajas:
-        - muy baja latencia, muy bajo motion blur, muy baja redundancia de datos
-
+    #todo-inline[Explicar la parte de SNN del paper]
+    #todo-inline[Explicar la combinacion]
 ]
 
 = ¿Cómo se entrenan las SNNs?
 #new-section-slide([], title: [])
 
 #slide[
-  #todo-inline[supervisado vs no supervisado]
+  #todo-inline[supervisado vs no supervisado (probablemente volar)]
   #todo-inline[supervisado: backpropagation y gradient descent, desafio de la no derivabilidad]
 ]
 
@@ -201,7 +231,10 @@ _*Características necesarias de las neuronas de una SNN:*_][
   #todo-inline[Ejemplo snntorch. El de las estrellas quizas?]
 ]
 
-
+= Referencias
+#slide(title: "Referencias")[
+  #bibliography("refs.bib", title: [Referencias])
+]
 
 #focus-slide[Muchas gracias! 🧠]
 
@@ -227,7 +260,3 @@ _*Características necesarias de las neuronas de una SNN:*_][
   ]
 ]
 
-= Referencias
-#slide(title: "Referencias")[
-  #bibliography("refs.bib", title: [Referencias])
-]
