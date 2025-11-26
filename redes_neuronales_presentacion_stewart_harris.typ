@@ -45,7 +45,7 @@
   ]
   #pause
   - _*Inspiración de redes biológicas*_: la comunicación entre neuronas biológicas sucede a través de señales eléctricas que contienen pulsos: \
-  #align(center, image("figs/Example_Vm.PNG", width: 50%))
+  #align(center, image("figs/Example_Vm.PNG", width: 80%))
 ]
 
 #slide(title: "Spiking Neural Networks")[
@@ -99,13 +99,30 @@ _*Características necesarias de las neuronas de una SNN:*_][
 
 = ¿Dónde se pueden ejecutar las SNNs?
 
-== Hardware neuromórfico
+#new-section-slide([], title:[])
 
+== Hardware neuromórfico
 #slide()[
-    #todo-inline[Hardware neuromorfico, por que y que existe comercialmente / semicomercialmente]
+    - Hardware para procesamiento de datos.
+    #pause
+    - A diferencia de hardware "tradicional" (CPU/GPU), las dinámicas de las neuronas están implementadas por circuitos electrónicos#footnote([Existen líneas de investigación alternativas a la electrónica, como por ejemplo fotónica.]) y no por software.
+    #pause
+    - No ejecutan software. El único control disponible es el peso de conexiones entre neuronas.
 ]
 
-#slide(title: [Procesador TrueNorth])[
+=== Ejemplo de hardware neuromórfico: neurona láser
+
+#slide(align: center+horizon, composer: (1fr, 2fr, 2fr))[
+    #image("figs/VCSEL.png")\
+][
+    #image("figs/pulso_QIG_nahmias.PNG")\
+    @Nahmias_Shastri_Tait_Prucnal_2013
+][
+    #image("figs/LIF.PNG")\
+]
+
+=== Ejemplo de hardware neuromórfico: procesador TrueNorth
+#slide()[
     #image("figs/truenortharch.png")
 ][
     Procesador TrueNorth:
@@ -114,18 +131,17 @@ _*Características necesarias de las neuronas de una SNN:*_][
     #pause
     - 1 millón de neuronas LIF.
     #pause
-    - 256 millones de conexiones entre neuronas (sinapsis)
+    - 256 millones de conexiones entre neuronas (sinapsis).
     #pause
     - Pesos de 2 bits de precisión.
     #pause
     - Dividido en 4096 cores.
     #pause
-    - Actualización asincrónica de neuronas.
+    - Salida binaria de neuronas (_"digital en amplitud"_).
     #pause
-    - Salida binaria de neuronas.
+    - Actualización asincrónica de neuronas (_"analógico en tiempo"_).
     #pause
     - Opcional: estocasticidad en la salida de las neuronas.
-    #pause
 ]
 
 
@@ -134,42 +150,23 @@ _*Características necesarias de las neuronas de una SNN:*_][
 
 #slide()[
     - _*Eficiencia energética*_: en muchos casos, el consumo de potencia es mucho menor que otras ANN principalmente debido a que:
+        #pause
         - son _event-driven_: las neuronas solo transmiten información (i.e.: un pulso) cuando ocurre un evento.
+        #pause
         - las señales de salida son poco densas (_sparse_) debido a que, para cada neurona, la mayor parte del tiempo no hay eventos.#footnote[Esto depende del entrenamiento, pero es posible incluir la cantidad de disparos total de la red como factor en la función de costo para regular el consumo de potencia total de la red.]
     #pause
     - _*Baja latencia*_:
-    #todo-inline[]
+        #pause
+        - Como son _event-driven_, los eventos se propagan en el momento que ocurren.
+        #pause
+        - Como se comunican únicamente con pulsos, todos los mensajes transmitidos son muy cortos.
 ]
 #slide()[
     - _*Apropiadas para procesamiento series temporales*_: 
-        - Como las neuronas tienen memoria su entrada en el pasado, no hace falta una arquitectura recurrente para procesar temporales.
+        - Como las neuronas tienen memoria de su entrada en el pasado, no hace falta una arquitectura recurrente para procesar temporales.
     #pause
     - _*Similitud a redes neuronales biológicas*_: son más cercanas a las redes neuronales biológicas, lo que puede ser útil para modelar y estudiar su comportamiento.
 ]
-
-// == SNNs aplicadas a series temporales
-// #slide(title: [DNNs vs. SNNs], composer: (1fr, 2fr))[
-//     _*Comparación entre DNNs y SNNs para aplicación de computer vision: @Hendy_Merkel_2022*_
-// ][
-//     #let color-cell(name, color) = (table.cell(fill: color, text(fill: white, name)))
-//     #table(
-//         columns: (1fr, 1fr, 1fr),
-//         align: (left, center, center),
-//         fill: (x,y) => if x==0 or y==0 {
-//             gray.lighten(20%)
-//         },
-//         stroke: gray.lighten(40%),
-//         inset: (left:1.5em, right:1.5em),
-//         table.header([], [DNNs], [SNNs]),
-//         [Procesamiento de datos], color-cell([Basado en frames], red), color-cell([Basado en eventos], green),
-//         [Latencia], color-cell([Alta], red), color-cell([Baja], green),
-//         [Diferenciable], color-cell([Sí], green), color-cell([No], red),
-//         // [Activación], [ReLU, Sigmoide, etc.], [Pulsos],
-//         [Complejidad de neurona], color-cell([Baja], green), color-cell([Alta], red),
-//         [Memoria a corto plazo], color-cell([Nivel red], red), color-cell([Nivel red y neuronal], green),
-//         [Eficiencia energética#footnote([Considerando hardware neuromórfico específico para cada caso.])], color-cell([Baja], red), color-cell([Alta], green)
-//     )
-// ]
 
 == ¿Qué es una cámara de eventos?
 #focus-slide[Caso de uso: procesamiento de salida de cámaras de eventos.]
@@ -208,15 +205,25 @@ _*Características necesarias de las neuronas de una SNN:*_][
 ]
 
 == Procesamiento de salida de una cámara de eventos con SNNs
-#slide[
-    #emph[Por el formato de los datos de salida de una cámara de eventos, las SNNs son ideales para procesarlos!]
+#slide(align: center+horizon)[
+    #text(size: 24pt)[Por el formato de los datos de salida de una cámara de eventos,\
+    las SNNs son ideales para procesarlos!]
 ]
-
-
+#slide(align:center+horizon, composer: (15fr, 1fr))[
+    #image("figs/gesture_recognition_arch.png")][
+    @gesture_recognition_2017
+]
 
 #slide[
     #todo-inline[Explicar la parte de SNN del paper]
-    #todo-inline[Explicar la combinacion]
+]
+
+#slide[
+    - Resultados:
+        - Latencia promedio de 105ms en reconocimiento de gestos (percibido como en tiempo real por un humano)
+        - Accuracy de entre 87.62% (para consumo de 88.5mW) y 96.44% (para consumo de 178.8mW) 
+            #pause
+            - #sym.arrow Un cargador de notebook de 60W alcanza para alimentar el análisis de 300 streams de video en tiempo real!
 ]
 
 = ¿Cómo se entrenan las SNNs?
@@ -227,12 +234,8 @@ _*Características necesarias de las neuronas de una SNN:*_][
   #todo-inline[supervisado: backpropagation y gradient descent, desafio de la no derivabilidad]
 ]
 
-#slide[
-  #todo-inline[Ejemplo snntorch. El de las estrellas quizas?]
-]
-
-= Referencias
-#slide(title: "Referencias")[
+// = Referencias
+#slide()[
   #bibliography("refs.bib", title: [Referencias])
 ]
 
