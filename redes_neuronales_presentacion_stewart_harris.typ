@@ -32,10 +32,6 @@
   logo1: image("figs/Instituto-Balseiro.png", height: 4.5em),
 )
 
-#slide()[
-    *#outline(title: [])*
-]
-
 = ¿Qué es una SNN?
 #new-section-slide([], title: [])
 
@@ -87,8 +83,11 @@ _*Características necesarias de las neuronas de una SNN:*_][
 #slide()[
     *_Métodos de codificación de estímulo de entrada en pulsos:_*
 ][
+    #pause
     - _*Rate encoding*_: Convierte intensidad del estímulo de entrada en una tasa de disparos.
+    #pause
     - _*Temporal encoding*_: Convierte intensidad del estímulo de entrada en un tiempo de disparo.
+    #pause
     - _*Delta modulation*_: Convierte _cambios_ de intensidad del estímulo de entrada en disparos
 ]
 
@@ -123,7 +122,7 @@ _*Características necesarias de las neuronas de una SNN:*_][
 
 === Ejemplo de hardware neuromórfico: procesador TrueNorth
 #slide()[
-    #image("figs/truenortharch.png")
+    #image("figs/truenortharch.png", height: 80%)
 ][
     Procesador TrueNorth:
     #pause
@@ -139,7 +138,7 @@ _*Características necesarias de las neuronas de una SNN:*_][
     #pause
     - Salida binaria de neuronas (_"digital en amplitud"_).
     #pause
-    - Actualización asincrónica de neuronas (_"analógico en tiempo"_).
+    - Actualización asincrónica de neuronas (_"analógico en tiempo"_).#footnote("Técnicamente tiene un tick de 1ms pero para muchos casos de usos puede aproximarse como analógico.")
     #pause
     - Opcional: estocasticidad en la salida de las neuronas.
 ]
@@ -195,13 +194,13 @@ _*Características necesarias de las neuronas de una SNN:*_][
 ]
 
 #slide(align:center+horizon, composer: (15fr, 1fr))[
-    #image("figs/frame_vs_event_based_dataset.png", height: 80%)][
-    @gesture_recognition_2017
+    #image("figs/frame_vs_event_based_rocks.png")][
+    @Hendy_Merkel_2022
 ]
 
 #slide(align:center+horizon, composer: (15fr, 1fr))[
-    #image("figs/frame_vs_event_based_rocks.png")][
-    @Hendy_Merkel_2022
+    #image("figs/frame_vs_event_based_dataset.png", height: 80%)][
+    @gesture_recognition_2017
 ]
 
 == Procesamiento de salida de una cámara de eventos con SNNs
@@ -215,35 +214,59 @@ _*Características necesarias de las neuronas de una SNN:*_][
 ]
 
 #slide[
-    #todo-inline[Explicar la parte de SNN del paper]
-]
-
-#slide[
     - Resultados:
         - Latencia promedio de 105ms en reconocimiento de gestos (percibido como en tiempo real por un humano)
-        - Accuracy de entre 87.62% (para consumo de 88.5mW) y 96.44% (para consumo de 178.8mW) 
+        - _Out-of-sample_ accuracy de entre 87.62% (para consumo de 88.5mW) y 96.44% (para consumo de 178.8mW) 
             #pause
-            - #sym.arrow Un cargador de notebook de 60W alcanza para alimentar el análisis de 300 streams de video en tiempo real!
+            - #sym.arrow Un cargador de notebook de 60W alcanza para alimentar el análisis de 300 streams de video en tiempo real.
 ]
 
 = ¿Cómo se entrenan las SNNs?
 #new-section-slide([], title: [])
 
-#slide[
-  #todo-inline[supervisado vs no supervisado (probablemente volar)]
-  #todo-inline[supervisado: backpropagation y gradient descent, desafio de la no derivabilidad]
+#slide()[
+    _*Aprendizaje no supervisado*_
+        #pause
+        - Implementar reconfiguración de pesos basada en *regla de Hebb* / *regla de Oja*
+            #pause
+            - Requiere hardware que permita la reconfiguración de pesos. Truenorth no lo admite, pero existen otros que sí (ROLLS).\
+][
+    #pause
+    _*Aprendizaje supervisado*_
+        - Entrenar red neuronal tradicional y convertir a SNN (_shadow-training_).
+        #pause
+        - Entrenar con backpropagation adaptado para SNNs.
+            #pause
+            - ...¿Cómo se adapta a la naturaleza no derivable de las SNNs? (_dead-neuron problem_)
+
 ]
 
-// = Referencias
+== Backpropagation adaptado para SNNs
+
+#slide(align: center+horizon)[
+    #image("figs/training.png")
+]
+#slide[
+    #image("figs/training_dead_neuron_detail.png")
+    _Dead-neuron problem_
+][
+    #image("figs/training_surrogate_detail.png")
+    \
+    _Surrogate-gradient_
+][
+    #image("figs/backprop_eq.png")\
+    Con _surrogate-gradient_, el término B es finito y mayor a 0. #footnote([Siempre que haya un pulso de salida])
+]
+
+#set heading(outlined: false)
 #slide()[
-  #bibliography("refs.bib", title: [Referencias])
+  #bibliography("refs.bib")
 ]
 
 #focus-slide[Muchas gracias! 🧠]
 
 
 #show: appendix
-#set heading(outlined: false)
 
 = Leaky Integrate-and-Fire
 
@@ -261,5 +284,21 @@ _*Características necesarias de las neuronas de una SNN:*_][
   - $s(t)$: estado de la neurona
   - $y(t)$: tren de deltas (disparos)
   ]
+]
+
+= SNN CNN
+#slide(align: center)[
+    #image("figs/SNNCNN.png")
+]
+
+= Regularización
+
+#slide[
+    _*Cantidad máxima de pulsos*_:
+        - Para regular el consumo de potencia
+        - Aplica a la suma de pulsos de toda la población de neuronas de la red
+    _*Cantidad mínima de pulsos*_:
+        - Si hay neuronas que disparan muy poco, es muy dificil de entrenar.
+        - Aplica a neuronas individuales.
 ]
 
